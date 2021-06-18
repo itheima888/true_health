@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<!--第一步引入样式-->
+<!--第二步引入vue-->
+<!--第三步引入elmentui-->
+<!--第四步创建vue对象-->
+<!--第五步：再id="app"div中使用elmentui组件 -->
+
+<!-- 引入ElementUI样式 -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- 引入ElementUI组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<body>
+<div id="app">
+
+    <!--一定要写到此容器中-->
+
+    <el-button type="success" @click="visible = true">Button</el-button>
+    <el-dialog :visible.sync="visible" title="Hello world">
+        <p>Try Element</p>
+    </el-dialog>
+</div>
+
+</body>
+</html>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            visible: false
+        }
+    })
+</script>

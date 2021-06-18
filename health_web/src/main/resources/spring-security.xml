@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                  http://www.springframework.org/schema/beans/spring-beans.xsd
+                  http://www.springframework.org/schema/mvc
+                  http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                  http://code.alibabatech.com/schema/dubbo
+                  http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+                  http://www.springframework.org/schema/context
+                  http://www.springframework.org/schema/context/spring-context.xsd
+                          http://www.springframework.org/schema/security
+                          http://www.springframework.org/schema/security/spring-security.xsd">
+    <!--匿名访问配置-->
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/img/**" security="none"/>
+    <security:http pattern="/js/**" security="none"/>
+    <security:http pattern="/plugins/**" security="none"/>
+    <security:http pattern="/template/**" security="none"/>
+    <security:http pattern="/login.html" security="none"/>
+
+    <!--自动配置 拦截规则配置  登录配置 csrf配置-->
+    <security:http auto-config="true" use-expressions="true">
+        <!--SpringSecurity信任iframe-->
+        <security:headers>
+            <!--设置在页面可以通过iframe访问受保护的页面，默认为不允许访问-->
+            <security:frame-options policy="SAMEORIGIN"></security:frame-options>
+        </security:headers>
+        <!--拦截规则配置 -->
+        <security:intercept-url pattern="/pages/**" access="isAuthenticated()"/>
+        <!--登录配置
+        因为框架默认的名称就是username password(可以省略配置)
+        -->
+        <security:form-login
+                login-processing-url="/login.do"
+                login-page="/login.html"
+                default-target-url="/pages/main.html"
+                always-use-default-target="true"
+                authentication-failure-url="/login.html"/>
+        <!--csrf禁用-->
+        <security:csrf disabled="true"/>
+
+        <!--退出-->
+        <security:logout logout-url="/logout.do" invalidate-session="true" logout-success-url="/login.html"/>
+    </security:http>
+
+    <!--认证管理器配置-->
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="userServiceSecurity">
+            <!--配置密码加密方式-->
+            <security:password-encoder ref="passwordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <!--注入密码加密对象-->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <!--开启注解方式权限控制-->
+    <security:global-method-security pre-post-annotations="enabled" />
+</beans>
